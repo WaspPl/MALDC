@@ -1,8 +1,9 @@
 from fastapi import FastAPI
 from contextlib import asynccontextmanager
 from asyncio import create_task, Queue, wait_for, TimeoutError
-from models import DisplayData
+from models import DisplayData, config
 
+settings = config.settings
 displayQueue: Queue = Queue()
 
 async def queueManager():
@@ -15,12 +16,12 @@ async def queueManager():
         
         itemToBeDisplayed = None
         
-        for timePassed in range(30): # replace this with a yaml setting
+        for timePassed in range(settings.MatrixTimeAwakeSeconds): # replace this with a yaml setting
             try:
                 itemToBeDisplayed = await wait_for(displayQueue.get(), timeout=5) # replace with yaml
                 break
             except TimeoutError:
-                if timePassed == 30:
+                if timePassed == settings.MatrixTimeAwakeSeconds:
                     #await matrix turn off
                     print("sleep")
                 else:
