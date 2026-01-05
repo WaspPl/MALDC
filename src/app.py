@@ -1,12 +1,12 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Response
 from contextlib import asynccontextmanager
 from asyncio import create_task, Queue, wait_for, TimeoutError
-from models import DisplayData, config
+from src.models.DisplayData import DisplayData
+from src.scripts import configToObject
 
-settings = config.settings
 displayQueue: Queue = Queue()
 
-async def queueManager():
+async def queueManager(settings, hardwareController):
     itemToBeDisplayed: DisplayData = None
     while True:
         if itemToBeDisplayed == None: itemToBeDisplayed = await displayQueue.get() # This will wait for something to be added to the queue
@@ -16,22 +16,29 @@ async def queueManager():
         
         itemToBeDisplayed = None
         
-        for timePassed in range(settings.MatrixTimeAwakeSeconds): # replace this with a yaml setting
+        for spritesPlayed in range(settings.matrix.random_sprites_before_sleep+1):
             try:
-                itemToBeDisplayed = await wait_for(displayQueue.get(), timeout=5) # replace with yaml
+                itemToBeDisplayed = await wait_for(displayQueue.get(), timeout=settings.matrix.random_sprite_interval_sec)
                 break
             except TimeoutError:
-                if timePassed == settings.MatrixTimeAwakeSeconds:
+                if spritesPlayed == settings.matrix.random_sprites_before_sleep:
                     #await matrix turn off
                     print("sleep")
                 else:
                     #await matrix random
-                    print("random")
+                    print(f"random {spritesPlayed}/{settings.matrix.random_sprites_before_sleep}")
 
 @asynccontextmanager
 async def queueLifespan(app: FastAPI):
-    create_task(queueManager()) # As long as queueManager runs the API will be alive
+    hardwareController = ""
+    task = create_task(queueManager(configToObject.settings, hardwareController)) # As long as queueManager runs the API will be alive
     yield
+    task.cancel()
 
 
 app: FastAPI = FastAPI(lifespan=queueLifespan)
+
+@app.post("/display")
+async def displayText(data: DisplayData):
+    await displayQueue.put(data)
+    return Response(status_code=202)

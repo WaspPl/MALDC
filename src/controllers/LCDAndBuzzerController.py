@@ -1,0 +1,47 @@
+import time
+import asyncio
+from src.scripts import configToObject
+
+class LCD:
+    defaultSettings = configToObject.settings
+    def __init__(self, lcd, gpio, settings = defaultSettings):
+        self.lcd = lcd
+        self.gpio = gpio
+        self.nextIndicator = self.lcd.create_char(0,(0b00000,0b00100,0b00100,0b00100,0b00100,0b11111,0b01110,0b00100,))
+        self.buzzerPin = settings.buzzer.pin
+        self.longWaitList = settings.lcd.long_wait_list
+        self.waitTime = settings.lcd.wait_time
+        self.longWaitTime = settings.lcd.long_wait_time
+        gpio.setmode(gpio.BCM)
+        gpio.setup(self.buzzerPin, gpio.OUT)
+        gpio.output(self.buzzerPin, gpio.HIGH) 
+        
+    def beep(self):
+        self.gpio.output(self.buzzerPin, self.gpio.LOW)  # Turn ON buzzer
+        time.sleep(0.01)  
+        self.gpio.output(self.buzzerPin, self.gpio.HIGH)   # Turn OFF buzzer
+        
+        
+    async def displayLetter(self,letter):
+        self.lcd.write_string(letter)
+        if letter == " ":
+            await asyncio.sleep(self.waitTime)   
+        elif letter in self.longWaitList:
+            await asyncio.sleep(self.longWaitTime)
+        else:
+            self.beep()
+            await asyncio.sleep(self.waitTime)
+        
+    def turnOff(self):
+        self.lcd.clear()
+        self.lcd.backlight_enabled = False
+        
+    def turnOn(self):
+        self.lcd.backlight_enabled = True
+        
+    def clear(self):
+        self.lcd.clear()
+        
+    def setLine(self,line):
+        self.lcd.cursor_pos = (line, 0)
+        
