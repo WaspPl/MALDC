@@ -21,23 +21,6 @@ def mock_lcd():
     lcd.write_string.return_vaslue = 0
     return lcd
 
-def test_beep_GPIOGetsTurnedOn(mock_lcd, mock_GPIO):
-
-
-    lcd = LCD(mock_lcd, mock_GPIO)
-
-    lcd.beep()
-    mock_GPIO.output.assert_any_call(lcd.buzzerPin, mock_GPIO.LOW)
-    
-def test_beep_GPIOGetsTurnedOff(mock_lcd, mock_GPIO):
-
-
-    lcd = LCD(mock_lcd, mock_GPIO)
-
-    lcd.beep()
-
-
-    mock_GPIO.output.assert_any_call(lcd.buzzerPin, mock_GPIO.HIGH)
 def test_beep_GPIOgoesOnAndThenOff(mock_lcd, mock_GPIO):
 
     from unittest.mock import call
@@ -52,7 +35,7 @@ def test_beep_GPIOgoesOnAndThenOff(mock_lcd, mock_GPIO):
     assert calls[2] == call(lcd.buzzerPin, mock_GPIO.HIGH)
 
 @pytest.mark.asyncio
-async def test_displayLeter_writesOnlyOneLetter(mock_lcd, mock_GPIO):
+async def test_displayLeter_OneLetter_writesTheLetterOnce(mock_lcd, mock_GPIO):
     #Arrange
     lcd = LCD(mock_lcd,mock_GPIO)
     #Act
@@ -63,7 +46,7 @@ async def test_displayLeter_writesOnlyOneLetter(mock_lcd, mock_GPIO):
     
 
 @pytest.mark.asyncio
-async def test_displayLeter_waitsNormalTimeWhenDisplayingASpaceAndDoesntBeep(mock_lcd, mock_GPIO):
+async def test_displayLeter_Space_waitsNormalTimeAndDoesntBeep(mock_lcd, mock_GPIO):
     #Arrange
     lcd = LCD(mock_lcd,mock_GPIO)
     lcd.beep = MagicMock()
@@ -76,7 +59,7 @@ async def test_displayLeter_waitsNormalTimeWhenDisplayingASpaceAndDoesntBeep(moc
     
 
 @pytest.mark.asyncio
-async def test_displayLeter_waitsNormalTimeWhenDisplayingALetterAndBeeps(mock_lcd, mock_GPIO):
+async def test_displayLeter_Letter_waitsNormalTimeAndBeeps(mock_lcd, mock_GPIO):
         #Arrange
     lcd = LCD(mock_lcd,mock_GPIO)
     lcd.beep = MagicMock()
@@ -89,7 +72,7 @@ async def test_displayLeter_waitsNormalTimeWhenDisplayingALetterAndBeeps(mock_lc
 
 
 @pytest.mark.asyncio
-async def test_displayLeter_waitsLongTimeWhenDisplayingACharacterFromTheLongWaitListAndDoesntBeep(mock_lcd, mock_GPIO):
+async def test_displayLeter_longWaitListItem_waitsLongTimeAndDoesntBeep(mock_lcd, mock_GPIO):
         #Arrange
     lcd = LCD(mock_lcd,mock_GPIO)
     lcd.beep = MagicMock()

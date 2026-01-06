@@ -8,8 +8,12 @@ api:
     host: "127.0.0.1"
     port: 8000
 matrix:
+  rows: 8
+  columns: 8
   random_sprites_before_sleep: 3
   random_sprite_interval_sec: 5
+  flip_every_other_row: true # Some matrixes have a zig-zag like numbering order. If this is true, every other row of a sprite will be reversed to accomodate for that
+  spritesheet_framerate: 0.1 # How many seconds between sprites in an animated spritesheet 
 buzzer:
   pin: 23
 lcd:
