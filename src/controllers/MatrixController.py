@@ -4,8 +4,8 @@ from fastapi import HTTPException
 import asyncio
 class Matrix :
     
-    def __init__(self, matrix, emotion):
-        self.matrix = matrix
+    def __init__(self, neoPixel, emotion):
+        self.matrix = neoPixel
         self.emotion: str = emotion
         self.animationInProgress = False
         self.awake = False

@@ -4,8 +4,8 @@ from src.scripts import configToObject
 
 class LCD:
     defaultSettings = configToObject.settings
-    def __init__(self, lcd, gpio, settings = defaultSettings):
-        self.lcd = lcd
+    def __init__(self, CharLCD, gpio, settings = defaultSettings):
+        self.lcd = CharLCD
         self.gpio = gpio
         self.nextIndicator = self.lcd.create_char(0,(0b00000,0b00100,0b00100,0b00100,0b00100,0b11111,0b01110,0b00100,))
         self.buzzerPin = settings.buzzer.pin
