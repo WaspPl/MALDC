@@ -25,5 +25,5 @@ class Sprites(BaseModel):
         "neutral": {"eyes": None, "mouth": None},
         "angry": {"eyes": None, "mouth": None},
         "sad": {"eyes": None, "mouth": None},
-        "happy": {"eyes": [], "mouth": None},
+        "happy": {"eyes": None, "mouth": None},
     })
