@@ -8,14 +8,13 @@ async def test_displayImage_MultipleFramesRepeatTimesMoreThan1_displaysAllFrames
     obj = Matrix(MagicMock(), "fake")
     fake_frames = [[1],[2]]
     
-    with patch("src.scripts.MatrixFunctions.base64ImageToRGBArray", return_value="RGB"), \
-        patch("src.scripts.MatrixFunctions.isSizeCorrect", return_value=True), \
+    with patch("src.scripts.MatrixFunctions.isSizeCorrect", return_value=True), \
         patch("src.scripts.MatrixFunctions.divideIntoFrames", return_value=fake_frames), \
         patch("asyncio.sleep") as sleep_mock, \
         patch("src.scripts.MatrixFunctions.displaySprite") as display_mock:
 
         await obj.displayImage(
-            spriteBase64="fake",
+            RGBArray=["RGB"],
             startingLayer=0,
             spriteRepeatTimes=2
         )
@@ -27,14 +26,13 @@ async def test_displayImage_MultipleFramesRepeatTimesMoreThan1_WaitBetweenAllThe
     obj = Matrix(MagicMock(), "fake")
     fake_frames = [[1],[2]]
 
-    with patch("src.scripts.MatrixFunctions.base64ImageToRGBArray", return_value="RGB"), \
-        patch("src.scripts.MatrixFunctions.isSizeCorrect", return_value=True), \
+    with patch("src.scripts.MatrixFunctions.isSizeCorrect", return_value=True), \
         patch("src.scripts.MatrixFunctions.divideIntoFrames", return_value=fake_frames), \
         patch("src.scripts.MatrixFunctions.displaySprite") as display_mock , \
         patch("asyncio.sleep") as sleep_mock:
 
         await obj.displayImage(
-            spriteBase64="fake",
+            RGBArray=["RGB"],
             startingLayer=0,
             spriteRepeatTimes=2
         )
@@ -45,14 +43,13 @@ async def test_displayImage_OneFrame_DisplayTheSpriteOnceWithNoWaiting():
     obj = Matrix(MagicMock(), "fake")
     fake_frames = [[1]]
 
-    with patch("src.scripts.MatrixFunctions.base64ImageToRGBArray", return_value="RGB"), \
-        patch("src.scripts.MatrixFunctions.isSizeCorrect", return_value=True), \
+    with patch("src.scripts.MatrixFunctions.isSizeCorrect", return_value=True), \
         patch("src.scripts.MatrixFunctions.divideIntoFrames", return_value=fake_frames), \
         patch("src.scripts.MatrixFunctions.displaySprite") as display_mock, \
         patch("asyncio.sleep") as sleep_mock:
 
         await obj.displayImage(
-            spriteBase64="fake",
+            RGBArray=["RGB"],
             startingLayer=0,
             spriteRepeatTimes=1
         )

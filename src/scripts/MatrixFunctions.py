@@ -1,5 +1,6 @@
 
 import numpy as np
+from typing import List
 
 def base64ImageToRGBArray(base64String: str):
     from PIL import Image, UnidentifiedImageError
@@ -15,7 +16,7 @@ def base64ImageToRGBArray(base64String: str):
     return np.array(image)
 
 
-def isSizeCorrect(Array, matrixHeight: int, matrixWidth: int, startingLayer: int = 0):
+def isSizeCorrect(Array: List[List[List[int]]], matrixHeight: int, matrixWidth: int, startingLayer: int = 0):
     
     RGBArray = np.array(Array)
     arrayHeight = RGBArray.shape[0]
@@ -25,7 +26,7 @@ def isSizeCorrect(Array, matrixHeight: int, matrixWidth: int, startingLayer: int
     if arrayHeight + startingLayer > matrixHeight: return False # The sprite sheet is horisontal, so it cant be bigger than the matrix itself
     return True
 
-def divideIntoFrames(Array, matrixWidth:int):
+def divideIntoFrames(Array: List[List[List[int]]], matrixWidth:int):
     RGBArray = np.array(Array)    
     result = []
     
@@ -35,7 +36,7 @@ def divideIntoFrames(Array, matrixWidth:int):
     
     return result
 
-def displaySprite(frame, matrix, startingLayer: int = 0, flip: bool = False):
+def displaySprite(frame: List[List[List[int]]], matrix, startingLayer: int = 0, flip: bool = False):
     sprite = np.array(frame)
     startingLayerOffset = startingLayer*sprite.shape[1]
     
@@ -43,7 +44,7 @@ def displaySprite(frame, matrix, startingLayer: int = 0, flip: bool = False):
     matrix[startingLayerOffset:startingLayerOffset+flatSprite.shape[0]] = flatSprite # from the offset to the end replace the matrix values with sprite's rgb pixels
     matrix.show()
     
-def spriteToFlat(frame, flip=False):
+def spriteToFlat(frame:List[List[List[int]]], flip=False):
     sprite = np.array(frame)
     if flip:
         sprite = np.array([row[::-1] if i % 2 == 1 else row for i,  row in enumerate(sprite)])
