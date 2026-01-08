@@ -1,6 +1,7 @@
 
 import numpy as np
 from typing import List
+from pathlib import Path
 
 def base64ImageToRGBArray(base64String: str):
     from PIL import Image, UnidentifiedImageError
@@ -13,6 +14,15 @@ def base64ImageToRGBArray(base64String: str):
         image = Image.open(BytesIO(imageBytes)).convert("RGB")
     except (UnidentifiedImageError, ValueError):
         raise HTTPException(status_code=400, detail="Sprite couldn't be resolved. Please provide correct Byte64 string")
+    return np.array(image)
+
+def imageFromPathToRGBArray(imagePath: Path) -> List:
+    from PIL import Image,UnidentifiedImageError 
+    
+    try:
+        image = Image.open(imagePath).convert("RGB")
+    except (UnidentifiedImageError, ValueError, FileNotFoundError):
+        raise ValueError(f"Sprite couldn't be resolved. Sprite Path: {imagePath}")
     return np.array(image)
 
 
@@ -51,5 +61,6 @@ def spriteToFlat(frame:List[List[List[int]]], flip=False):
  
     flatSprite = sprite.reshape(-1,3)
     return flatSprite
-    
+
+
     

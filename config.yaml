@@ -15,6 +15,7 @@ matrix:
   flip_every_other_row: true # Some matrixes have a zig-zag like numbering order. If this is true, every other row of a sprite will be reversed to accomodate for that
   spritesheet_framerate: 0.1 # How many seconds between sprites in an animated spritesheet 
   brightness: 0.2 # A value between 0 and 1 that controlls how bright the LEDs should be
+  sprites_folder: "src/sprites"
 buzzer:
   pin: 23
 lcd:
