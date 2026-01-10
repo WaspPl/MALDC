@@ -200,7 +200,7 @@ def test_displaySprite_HandlesStartingLayerCorrectly(mock_Matrix):
         np.array([[255, 0, 0]])
     )
 
-def test_imageFromPathToEGBArray_fakeImage_ReturnsRGBArrayOfThatImage(monkeypatch):
+def test_imageFromPathToRGBArray_fakeImage_ReturnsRGBArrayOfThatImage(monkeypatch):
     from PIL import Image
     fake_image = Image.new("RGB",(2,1),color=(1,2,3)) # a 2x1 image colored with RGB(1,2,3)
     
@@ -214,7 +214,7 @@ def test_imageFromPathToEGBArray_fakeImage_ReturnsRGBArrayOfThatImage(monkeypatc
     assert np.array_equal(result, [[[1,2,3],[1,2,3]]])    
 
 
-def test_imageFromPathToEGBArray_notAnImage_RaisesAValueError():
+def test_imageFromPathToRGBArray_notAnImage_RaisesAValueError():
     with pytest.raises(ValueError):
         mf.imageFromPathToRGBArray("wrong attribute")
     
