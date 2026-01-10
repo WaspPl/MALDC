@@ -1,5 +1,5 @@
 import pytest
-from unittest.mock import MagicMock, patch
+from unittest.mock import MagicMock, patch, AsyncMock
 from fastapi import HTTPException
 from src.controllers.MatrixController import Matrix
 
@@ -97,7 +97,31 @@ async def test_getSprites_run_SpritesGetLoadedCorrectly(monkeypatch):
     assert result.random == expectedObj.random
     assert result.rest == expectedObj.rest
     assert result.speech == expectedObj.speech
+    
 
+@pytest.mark.asyncio
+async def test_displayRandomIdleAnimation_spritesExist_callsDisplayImage():
+    obj = Matrix(MagicMock(), "neutral")
+
+    fake_sprite = [[[0, 0, 0]]]
+
+    obj.sprites.random = {"common": [fake_sprite]}
+
+    with patch("src.scripts.MatrixFunctions.getRandomIdleAnimationGroup", return_value="common"), \
+         patch.object(obj, "displayImage", new_callable=AsyncMock) as mock_display:
+
+        await obj.displayRandomIdleAnimation()
+
+        mock_display.assert_awaited_once_with(fake_sprite)
+        
+        
+
+@pytest.mark.asyncio
+async def test_displayRandomIdleAnimation_noSprites_raisesValueError():
+    obj = Matrix(MagicMock(), "neutral")
     
+    obj.sprites.random = {"common": []}
     
-    
+    with patch("src.scripts.MatrixFunctions.getRandomIdleAnimationGroup", return_value="common"):
+        with pytest.raises(ValueError):
+            await obj.displayRandomIdleAnimation()

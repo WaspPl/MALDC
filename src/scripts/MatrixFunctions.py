@@ -2,6 +2,7 @@
 import numpy as np
 from typing import List
 from pathlib import Path
+import random
 
 def base64ImageToRGBArray(base64String: str):
     from PIL import Image, UnidentifiedImageError
@@ -63,4 +64,15 @@ def spriteToFlat(frame:List[List[List[int]]], flip=False):
     return flatSprite
 
 
+def getRandomIdleAnimationGroup(commonWeight: int, uncommonWeight: int, rareWeight: int, rng=random.randint) -> str:
+
+    sumOfWeights: int = commonWeight + uncommonWeight + rareWeight
     
+    randomNumber = rng(1,sumOfWeights)
+    
+    if randomNumber <= commonWeight:
+        return "common"
+    elif randomNumber <= commonWeight+uncommonWeight:
+        return "uncommon"
+    else:
+        return "rare"

@@ -217,4 +217,24 @@ def test_imageFromPathToRGBArray_fakeImage_ReturnsRGBArrayOfThatImage(monkeypatc
 def test_imageFromPathToRGBArray_notAnImage_RaisesAValueError():
     with pytest.raises(ValueError):
         mf.imageFromPathToRGBArray("wrong attribute")
+
+# getRandomIdleAnimaionGroup
+@pytest.mark.parametrize(
+    "randomValue, expected",
+    [
+        (1, "common"),
+        (5, "common"),
+        (6, "uncommon"),
+        (8, "uncommon"),
+        (9, "rare"),
+        (10, "rare"),
+    ]
+)
+        
+def test_getRandomIdleAnimationGroup(randomValue, expected):
+    def mock_rng(a,b):
+        return randomValue
     
+    result = mf.getRandomIdleAnimationGroup(5,3,2,mock_rng)
+    
+    assert result == expected
