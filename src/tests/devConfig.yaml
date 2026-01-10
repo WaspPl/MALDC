@@ -1,0 +1,34 @@
+---
+api:
+  # UDS is not a thing on windows, if its supposed to run on Linux turn this setting to true, otherwise keep it as is.
+  use_uds: false
+  linux:
+    socket: "/tmp/maldc.sock" 
+  windows:
+    host: "127.0.0.1"
+    port: 8000
+matrix:
+  rows: 8
+  columns: 8
+  random_sprites_before_sleep: 3
+  random_sprite_interval_sec: 5
+  random_sprites_weights:
+   # how likely sprites of each group are to play. The sprites are placed in src/sprites/random  
+    common: 5
+    uncommon: 3
+    rare: 2
+  flip_every_other_row: true # Some matrixes have a zig-zag like numbering order. If this is true, every other row of a sprite will be reversed to accomodate for that
+  spritesheet_framerate: 0.1 # How many seconds between sprites in an animated spritesheet 
+  brightness: 0.2 # A value between 0 and 1 that controlls how bright the LEDs should be
+  sprites_folder: "src/sprites"
+
+buzzer:
+  pin: 23
+lcd:
+  rows: 2
+  columns: 16
+  backlight_enabled_by_default: false
+  long_wait_list: [",", ".", "?", "!", ":", "\n"] # A list of charcters that will cause the LCD to wait longer before displaying the next character
+  wait_time: 0.05 # Time in seconds. How long the pause between characters is gonna be
+  long_wait_time: 0.1 # Time in seconds. How long the pause between characters specified in "long_wait_list" is gonna be.
+  next_screen_time: 1 # Time is seconds. How long the pause between screen changes is gonna be.

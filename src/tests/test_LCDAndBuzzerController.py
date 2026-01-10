@@ -1,7 +1,7 @@
 import pytest
 import pytest_asyncio
-from unittest.mock import MagicMock, AsyncMock, patch
-
+from unittest.mock import MagicMock, AsyncMock, patch, call
+from src.scripts.configToObject import loadSettings
 from src.controllers.LCDAndBuzzerController import LCD
 
 @pytest.fixture
@@ -11,75 +11,57 @@ def mock_GPIO():
     gpio.OUT = "OUT"
     gpio.HIGH = 1
     gpio.LOW = 0
-    
     return gpio
 
 @pytest.fixture
-def mock_lcd():
-    lcd = MagicMock()
-    lcd.create_char.return_value = 0
-    lcd.write_string.return_vaslue = 0
+def mock_CharLCD():
+    charLCD = MagicMock()
+    charLCD.create_char = MagicMock(return_value=0)
+    charLCD.write_string = MagicMock(return_value=0)
+    return charLCD
+
+@pytest.fixture
+def mock_lcd(mock_GPIO, mock_CharLCD):
+    lcd = LCD(mock_CharLCD, mock_GPIO, loadSettings("src/tests/devConfig.yaml"))
+    lcd.buzzerPin = 17
+    lcd.waitTime = 0.1
+    lcd.longWaitTime = 0.5
     return lcd
 
 def test_beep_GPIOgoesOnAndThenOff(mock_lcd, mock_GPIO):
-
-    from unittest.mock import call
-
-    lcd = LCD(mock_lcd, mock_GPIO)
-
-    lcd.beep()
+    mock_lcd.beep()
 
     calls = mock_GPIO.output.call_args_list
-    #The 0th is the setup call
-    assert calls[1] == call(lcd.buzzerPin, mock_GPIO.LOW)
-    assert calls[2] == call(lcd.buzzerPin, mock_GPIO.HIGH)
+    # Starts with a 1, because the 0th call is the setup
+    assert calls[1] == call(mock_lcd.buzzerPin, mock_GPIO.LOW)
+    assert calls[2] == call(mock_lcd.buzzerPin, mock_GPIO.HIGH)
 
 @pytest.mark.asyncio
-async def test_displayLeter_OneLetter_writesTheLetterOnce(mock_lcd, mock_GPIO):
-    #Arrange
-    lcd = LCD(mock_lcd,mock_GPIO)
-    #Act
-    with patch("src.controllers.LCDAndBuzzerController.asyncio.sleep", new_callable=AsyncMock) as mockSleep:
-        await lcd.displayLetter("x")
-    #Assert
-    mock_lcd.write_string.assert_called_once_with("x")
-    
+async def test_displayLetter_oneLetter_writesTheLetterOnce(mock_lcd, mock_CharLCD):
+    with patch("src.controllers.LCDAndBuzzerController.asyncio.sleep", new_callable=AsyncMock):
+        await mock_lcd.displayLetter("x")
+    mock_CharLCD.write_string.assert_called_once_with("x")
 
 @pytest.mark.asyncio
-async def test_displayLeter_Space_waitsNormalTimeAndDoesntBeep(mock_lcd, mock_GPIO):
-    #Arrange
-    lcd = LCD(mock_lcd,mock_GPIO)
-    lcd.beep = MagicMock()
-    #Act
+async def test_displayLetter_space_waitsNormalTimeAndDoesntBeep(mock_lcd):
+    mock_lcd.beep = MagicMock()
     with patch("src.controllers.LCDAndBuzzerController.asyncio.sleep", new_callable=AsyncMock) as mockSleep:
-        await lcd.displayLetter(" ")
-    #Assert
-        mockSleep.assert_awaited_once_with(lcd.waitTime)
-        lcd.beep.assert_not_called()
-    
+        await mock_lcd.displayLetter(" ")
+    mockSleep.assert_awaited_once_with(mock_lcd.waitTime)
+    mock_lcd.beep.assert_not_called()
 
 @pytest.mark.asyncio
-async def test_displayLeter_Letter_waitsNormalTimeAndBeeps(mock_lcd, mock_GPIO):
-        #Arrange
-    lcd = LCD(mock_lcd,mock_GPIO)
-    lcd.beep = MagicMock()
-    #Act
+async def test_displayLetter_letter_waitsNormalTimeAndBeeps(mock_lcd):
+    mock_lcd.beep = MagicMock()
     with patch("src.controllers.LCDAndBuzzerController.asyncio.sleep", new_callable=AsyncMock) as mockSleep:
-        await lcd.displayLetter("a")
-    #Assert
-        mockSleep.assert_awaited_once_with(lcd.waitTime)
-        lcd.beep.assert_called_once()
-
+        await mock_lcd.displayLetter("a")
+    mockSleep.assert_awaited_once_with(mock_lcd.waitTime)
+    mock_lcd.beep.assert_called_once()
 
 @pytest.mark.asyncio
-async def test_displayLeter_longWaitListItem_waitsLongTimeAndDoesntBeep(mock_lcd, mock_GPIO):
-        #Arrange
-    lcd = LCD(mock_lcd,mock_GPIO)
-    lcd.beep = MagicMock()
-    #Act
+async def test_displayLetter_longWaitListItem_waitsLongTimeAndDoesntBeep(mock_lcd):
+    mock_lcd.beep = MagicMock()
     with patch("src.controllers.LCDAndBuzzerController.asyncio.sleep", new_callable=AsyncMock) as mockSleep:
-        await lcd.displayLetter("!")
-    #Assert
-        mockSleep.assert_awaited_once_with(lcd.longWaitTime)
-        lcd.beep.assert_not_called()
-
+        await mock_lcd.displayLetter("!")
+    mockSleep.assert_awaited_once_with(mock_lcd.longWaitTime)
+    mock_lcd.beep.assert_not_called()

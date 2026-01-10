@@ -1,10 +1,6 @@
 from pathlib import Path
 import yaml
 
-here = Path(__file__).resolve().parents[2] #gets a parent dir 2 levels up
-with open(here / './config.yaml', 'r') as stream:
-    config_dict = yaml.safe_load(stream)
-
 
 class Struct:
     def __init__(self, **kwargs):
@@ -15,4 +11,9 @@ class Struct:
                 self.__dict__[key] = value
 
 
-settings = Struct(**config_dict)
+def loadSettings(path: Path):
+    here = Path(__file__).resolve().parents[2] #gets a parent dir 2 levels up
+    with open(here / path, 'r') as stream:
+        config_dict = yaml.safe_load(stream)
+
+    return Struct(**config_dict)

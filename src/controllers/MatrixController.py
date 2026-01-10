@@ -1,4 +1,4 @@
-from src.scripts import configToObject
+from src.scripts.configToObject import Struct
 import src.scripts.MatrixFunctions as mf
 from fastapi import HTTPException
 import asyncio
@@ -10,17 +10,17 @@ import numpy as np
 import os
 
 class Matrix :
-    def __init__(self, neoPixel, emotion: str):
+    def __init__(self, neoPixel, emotion: str, settings: Struct):
         self.matrix = neoPixel
         self.emotion= emotion
         self.animationInProgress = False
         self.awake = False
-        self.matrixHeight = configToObject.settings.matrix.rows
-        self.matrixWidth = configToObject.settings.matrix.columns
-        self.flipEveryOtherRow = configToObject.settings.matrix.flip_every_other_row
-        self.spritesFolder = configToObject.settings.matrix.sprites_folder
+        self.matrixHeight = settings.matrix.rows
+        self.matrixWidth = settings.matrix.columns
+        self.flipEveryOtherRow = settings.matrix.flip_every_other_row
+        self.spritesFolder = settings.matrix.sprites_folder
         self.sprites = Sprites()
-        self.randomIdleAnimationWeights = configToObject.settings.matrix.random_sprites_weights
+        self.randomIdleAnimationWeights = settings.matrix.random_sprites_weights
         self.getSprites()
         
 
@@ -82,7 +82,9 @@ class Matrix :
         return 
     
     async def displayOnAnimation(self):
+        self.awake = True
         await self.displayImage(self.sprites.onOff["on"])
 
     async def displayOffAnimation(self):
+        self.awake = False
         await self.displayImage(self.sprites.onOff["off"])

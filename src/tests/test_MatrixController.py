@@ -2,10 +2,16 @@ import pytest
 from unittest.mock import MagicMock, patch, AsyncMock
 from fastapi import HTTPException
 from src.controllers.MatrixController import Matrix
+from src.scripts.configToObject import loadSettings
+
+
+
+@pytest.fixture
+def mock_matrix():
+    return Matrix(MagicMock(), "fake", loadSettings("src/tests/devConfig.yaml"))
 
 @pytest.mark.asyncio
-async def test_displayImage_MultipleFramesRepeatTimesMoreThan1_displaysAllFramesCorrectly():
-    obj = Matrix(MagicMock(), "fake")
+async def test_displayImage_MultipleFramesRepeatTimesMoreThan1_displaysAllFramesCorrectly(mock_matrix):
     fake_frames = [[1],[2]]
     
     with patch("src.scripts.MatrixFunctions.isSizeCorrect", return_value=True), \
@@ -13,7 +19,7 @@ async def test_displayImage_MultipleFramesRepeatTimesMoreThan1_displaysAllFrames
         patch("asyncio.sleep") as sleep_mock, \
         patch("src.scripts.MatrixFunctions.displaySprite") as display_mock:
 
-        await obj.displayImage(
+        await mock_matrix.displayImage(
             RGBArray=["RGB"],
             startingLayer=0,
             spriteRepeatTimes=2
@@ -22,8 +28,7 @@ async def test_displayImage_MultipleFramesRepeatTimesMoreThan1_displaysAllFrames
     
 
 @pytest.mark.asyncio
-async def test_displayImage_MultipleFramesRepeatTimesMoreThan1_WaitBetweenAllTheFramesButNotAfterTheLastOne():
-    obj = Matrix(MagicMock(), "fake")
+async def test_displayImage_MultipleFramesRepeatTimesMoreThan1_WaitBetweenAllTheFramesButNotAfterTheLastOne(mock_matrix):
     fake_frames = [[1],[2]]
 
     with patch("src.scripts.MatrixFunctions.isSizeCorrect", return_value=True), \
@@ -31,7 +36,7 @@ async def test_displayImage_MultipleFramesRepeatTimesMoreThan1_WaitBetweenAllThe
         patch("src.scripts.MatrixFunctions.displaySprite") as display_mock , \
         patch("asyncio.sleep") as sleep_mock:
 
-        await obj.displayImage(
+        await mock_matrix.displayImage(
             RGBArray=["RGB"],
             startingLayer=0,
             spriteRepeatTimes=2
@@ -39,8 +44,7 @@ async def test_displayImage_MultipleFramesRepeatTimesMoreThan1_WaitBetweenAllThe
     assert sleep_mock.call_count == 3 # 2 frames 2 repeat times so 4 frames total so it should sleep 3 times inbetween
     
 @pytest.mark.asyncio
-async def test_displayImage_OneFrame_DisplayTheSpriteOnceWithNoWaiting():
-    obj = Matrix(MagicMock(), "fake")
+async def test_displayImage_OneFrame_DisplayTheSpriteOnceWithNoWaiting(mock_matrix):
     fake_frames = [[1]]
 
     with patch("src.scripts.MatrixFunctions.isSizeCorrect", return_value=True), \
@@ -48,7 +52,7 @@ async def test_displayImage_OneFrame_DisplayTheSpriteOnceWithNoWaiting():
         patch("src.scripts.MatrixFunctions.displaySprite") as display_mock, \
         patch("asyncio.sleep") as sleep_mock:
 
-        await obj.displayImage(
+        await mock_matrix.displayImage(
             RGBArray=["RGB"],
             startingLayer=0,
             spriteRepeatTimes=1
@@ -57,11 +61,10 @@ async def test_displayImage_OneFrame_DisplayTheSpriteOnceWithNoWaiting():
     assert sleep_mock.call_count == 0 
     
 @pytest.mark.asyncio
-async def test_getSprites_run_SpritesGetLoadedCorrectly(monkeypatch):
+async def test_getSprites_run_SpritesGetLoadedCorrectly(monkeypatch,mock_matrix):
     from PIL import Image
     import numpy as np
     from src.models.Sprites import Sprites
-    obj = Matrix(MagicMock(), "neutral")
     fake_imgArray = np.array(Image.new("RGB",(3,2), color=(1,2,3)))
     
     expectedObj = Sprites(
@@ -90,7 +93,7 @@ async def test_getSprites_run_SpritesGetLoadedCorrectly(monkeypatch):
     
     with patch("src.scripts.MatrixFunctions.imageFromPathToRGBArray", return_value=fake_imgArray), \
         patch("os.listdir", return_value=["fake"]):
-        result = obj.getSprites()
+        result = mock_matrix.getSprites()
 
 
     assert result.onOff == expectedObj.onOff
@@ -100,28 +103,26 @@ async def test_getSprites_run_SpritesGetLoadedCorrectly(monkeypatch):
     
 
 @pytest.mark.asyncio
-async def test_displayRandomIdleAnimation_spritesExist_callsDisplayImage():
-    obj = Matrix(MagicMock(), "neutral")
+async def test_displayRandomIdleAnimation_spritesExist_callsDisplayImage(mock_matrix):
 
     fake_sprite = [[[0, 0, 0]]]
 
-    obj.sprites.random = {"common": [fake_sprite]}
+    mock_matrix.sprites.random = {"common": [fake_sprite]}
 
     with patch("src.scripts.MatrixFunctions.getRandomIdleAnimationGroup", return_value="common"), \
-         patch.object(obj, "displayImage", new_callable=AsyncMock) as mock_display:
+         patch.object(mock_matrix, "displayImage", new_callable=AsyncMock) as mock_display:
 
-        await obj.displayRandomIdleAnimation()
+        await mock_matrix.displayRandomIdleAnimation()
 
         mock_display.assert_awaited_once_with(fake_sprite)
         
         
 
 @pytest.mark.asyncio
-async def test_displayRandomIdleAnimation_noSprites_raisesValueError():
-    obj = Matrix(MagicMock(), "neutral")
+async def test_displayRandomIdleAnimation_noSprites_raisesValueError(mock_matrix):
     
-    obj.sprites.random = {"common": []}
+    mock_matrix.sprites.random = {"common": []}
     
     with patch("src.scripts.MatrixFunctions.getRandomIdleAnimationGroup", return_value="common"):
         with pytest.raises(ValueError):
-            await obj.displayRandomIdleAnimation()
+            await mock_matrix.displayRandomIdleAnimation()

@@ -1,10 +1,10 @@
 import time
 import asyncio
-from src.scripts import configToObject
+from src.scripts.configToObject import Struct
 
 class LCD:
-    defaultSettings = configToObject.settings
-    def __init__(self, CharLCD, gpio, settings = defaultSettings):
+
+    def __init__(self, CharLCD, gpio, settings: Struct):
         self.lcd = CharLCD
         self.gpio = gpio
         self.nextIndicator = self.lcd.create_char(0,(0b00000,0b00100,0b00100,0b00100,0b00100,0b11111,0b01110,0b00100,))
