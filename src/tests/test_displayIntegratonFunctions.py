@@ -72,3 +72,35 @@ def test_splitTextToLines_onlyUnsupported_ReturnsEmptyArray():
     result = dif.splitTextToLines(text, lineLength=10)
 
     assert result == []
+
+@pytest.mark.parametrize(
+    "letter, expected",
+    [
+        # group "o"
+        ("a", "o"),
+        ("e", "o"),
+        ("i", "o"),
+        ("q", "o"),
+        ("w", "o"),
+
+        # group "a"
+        ("o", "a"),
+        ("u", "a"),
+        ("l", "a"),
+        ("r", "a"),
+
+        # space
+        (" ", None),
+
+        # default "m"
+        ("b", "m"),
+        ("c", "m"),
+        ("d", "m"),
+        ("f", "m"),
+        ("z", "m"),
+        ("1", "m"),
+        (".", "m"),
+    ],
+)
+def test_matchMouthToLetter(letter, expected):
+    assert dif.matchMouthToLetter(letter) == expected

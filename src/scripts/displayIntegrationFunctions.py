@@ -3,6 +3,10 @@ from src.scripts.configToObject import Struct
 from src.controllers import MatrixController, LCDAndBuzzerController
 from asyncio import Queue, wait_for
 from typing import List
+import asyncio
+import src.scripts.MatrixFunctions as mf
+import src.scripts.displayIntegrationFunctions as dif
+
 
 async def queueManager(settings: Struct, matrix:MatrixController.Matrix, lcd: LCDAndBuzzerController, displayQueue: Queue):
     firstItemInQueue: DisplayData = None
@@ -78,6 +82,48 @@ def splitTextToLines(text: str, lineLength: int = 16):
     return finalArray
         
 
-async def display( message: str = "", spriteBase64: str = None, spriteReplayTimes: int = 1):
+async def display( matrix: MatrixController.Matrix, lcd : LCDAndBuzzerController.LCD, message: str = "", spriteBase64: str = None, spriteReplayTimes: int = 1):
+    animation = None
+    lines = dif.splitTextToLines(message, lcd.lineLength)
+    
+    if spriteBase64:
+        animationRGBArray = mf.base64ImageToRGBArray(spriteBase64)
+        animation = asyncio.create_task(matrix.displayImage(animationRGBArray, 0, spriteReplayTimes))
+    
+    for lineIndex, line in enumerate(lines):
+        if animation.done(): await matrix.displayImage(matrix.sprites.rest[matrix.emotion]["eyes"], 0)
+        
+        for letter in line:
+            await lcd.displayLetter(letter)
+            if animation.done():
+                mouth = matchMouthToLetter(letter)
+                if not mouth:
+                    await matrix.displayImage(matrix.sprites.rest[matrix.emotion]["mouth"], 4)
+                else:
+                    await matrix.displayImage(matrix.sprites.speech[mouth])
+        
+        lcd.setLine(lineIndex % 2)
+        
+        if animation.done(): await matrix.displayImage(matrix.sprites.rest[matrix.emotion]["mouth"], 4)
+        
+        if lineIndex%2==0 and lineIndex!=len(lines)-1:
+            await asyncio.sleep(lcd.nextScreenWaitTime)
+            lcd.clear()
+        
+    if animation and not animation.done(): await animation
+    
+    await matrix.displayImage(matrix.sprites.rest[matrix.emotion]["eyes"], 0)
+    await matrix.displayImage(matrix.sprites.rest[matrix.emotion]["mouth"], 4)
+    
+    await asyncio.sleep(3)
+    
+    lcd.clear()
+    lcd.turnOff()
     
     return
+
+def matchMouthToLetter(letter: str):
+    if letter in {"a","e","i","q","w"}: return "o"
+    if letter in {"o", "u", "l", "r"}: return "a"
+    if letter == " ": return None
+    return "m"

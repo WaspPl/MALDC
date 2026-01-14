@@ -12,6 +12,10 @@ class LCD:
         self.longWaitList = settings.lcd.long_wait_list
         self.waitTime = settings.lcd.wait_time
         self.longWaitTime = settings.lcd.long_wait_time
+        self.nextScreenWaitTime = settings.lcd.next_screen_wait_time
+        self.lineLength = settings.lcd.line_length
+        self.lineCount = settings.lcd.line_count
+        
         gpio.setmode(gpio.BCM)
         gpio.setup(self.buzzerPin, gpio.OUT)
         gpio.output(self.buzzerPin, gpio.HIGH) 

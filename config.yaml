@@ -25,10 +25,10 @@ matrix:
 buzzer:
   pin: 23
 lcd:
-  rows: 2
-  columns: 16
+  line_count: 2
+  line_length: 16
   backlight_enabled_by_default: false
   long_wait_list: [",", ".", "?", "!", ":", "\n"] # A list of charcters that will cause the LCD to wait longer before displaying the next character
   wait_time: 0.05 # Time in seconds. How long the pause between characters is gonna be
   long_wait_time: 0.1 # Time in seconds. How long the pause between characters specified in "long_wait_list" is gonna be.
-  next_screen_time: 1 # Time is seconds. How long the pause between screen changes is gonna be.
+  next_screen_wait_time: 1 # Time is seconds. How long the pause between screen changes is gonna be.
