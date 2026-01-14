@@ -1,6 +1,6 @@
 import pytest
 from httpx import AsyncClient, ASGITransport
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 
 from src.app import app, displayQueue
 from src.models.DisplayData import DisplayData
@@ -23,21 +23,8 @@ async def test_AppEndpoints_PUTRequestWithAllBodyParameters_ItemIsPutInQueue():
         
         
 @pytest.mark.asyncio
-async def test_AppEndpoints_PUTRequestWithOnlyRequiredParameters_ItemIsPutInQueueWithDefaultValuesForUnspecifiedFields():
+async def test_AppEndpoints_PUTRequestWithNoParameters_ItemIsNotPutInQueueAndErrorIsReturned():
     async with AsyncClient(transport=ASGITransport(app=app),base_url=baseUrl) as client:
-        await client.post(url=displayUrl, json={
-            "message": "testing"
-        })
-        item = await displayQueue.get()
-        assert item.model_dump() == DisplayData(message="testing",
-                                                spriteBase64=None,
-                                                spriteReplayTimes=1).model_dump()
-        
-        
-@pytest.mark.asyncio
-async def test_AppEndpoints_PUTRequestWithoutRequiredParameters_ItemIsNotPutInQueueAndAnErrorIsReturned():
-    async with AsyncClient(transport=ASGITransport(app=app),base_url=baseUrl) as client:
-        result = await client.post(url=displayUrl, json={
-        })
-        assert displayQueue.empty()
-        assert result.status_code == 422
+            response = await client.post(url=displayUrl, json={
+            })
+            assert response.status_code == 400

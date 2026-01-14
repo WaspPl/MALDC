@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Response
+from fastapi import FastAPI, Response, HTTPException
 from contextlib import asynccontextmanager
 from asyncio import create_task, Queue, wait_for, TimeoutError
 from src.models.DisplayData import DisplayData
@@ -32,7 +32,8 @@ async def queueLifespan(app: FastAPI):
 
 app: FastAPI = FastAPI(lifespan=queueLifespan)
 
-@app.post("/display")
+@app.post("/display", status_code=202)
 async def displayText(data: DisplayData):
+    if data.message is None and data.spriteBase64 is None:
+        raise HTTPException(status_code=400, detail="At least one of those fields must me specified: message, spriteBase64")
     await displayQueue.put(data)
-    return Response(status_code=202)
