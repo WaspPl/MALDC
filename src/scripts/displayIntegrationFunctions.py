@@ -24,9 +24,9 @@ async def queueManager(settings: Struct, matrix:MatrixController.Matrix, lcd: LC
                 break
             except TimeoutError:
                 if iteration == settings.matrix.random_sprites_before_sleep:
-                    matrix.displayOffAnimation()
+                    await matrix.displayOffAnimation()
                 else:
-                    matrix.displayRandomIdleAnimation()
+                    await matrix.displayRandomIdleAnimation()
 
 def splitTextToLines(text: str, lineLength: int = 16):
     import string
@@ -90,6 +90,8 @@ async def display( matrix: MatrixController.Matrix, lcd : LCDAndBuzzerController
         animation = asyncio.create_task(matrix.displayImage(animationRGBArray, 0, spriteReplayTimes))
     else:
         animation = asyncio.create_task(asyncio.sleep(0))
+    
+    lcd.turnOn()
     
     for lineIndex, line in enumerate(lines):
         if animation.done(): await matrix.displayImage(matrix.sprites.rest[matrix.emotion]["eyes"], 0)
