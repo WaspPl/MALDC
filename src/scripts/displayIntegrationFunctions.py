@@ -79,8 +79,7 @@ def splitTextToLines(text: str, lineLength: int = 16):
                 finalArray[i] += " "
             finalArray[i] += "\x00"
 
-    return finalArray
-        
+    return finalArray 
 
 async def display( matrix: MatrixController.Matrix, lcd : LCDAndBuzzerController.LCD, message: str = "", spriteBase64: str = None, spriteReplayTimes: int = 1):
     lines = dif.splitTextToLines(message, lcd.lineLength)
@@ -126,6 +125,7 @@ async def display( matrix: MatrixController.Matrix, lcd : LCDAndBuzzerController
     return
 
 def matchMouthToLetter(letter: str):
+    letter = letter.lower()
     if letter in {"a","e","i","q","w"}: return "o"
     if letter in {"o", "u", "l", "r"}: return "a"
     if letter == " ": return None

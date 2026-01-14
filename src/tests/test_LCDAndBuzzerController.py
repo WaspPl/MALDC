@@ -28,8 +28,9 @@ def mock_lcd(mock_GPIO, mock_CharLCD):
     lcd.longWaitTime = 0.5
     return lcd
 
-def test_beep_GPIOgoesOnAndThenOff(mock_lcd, mock_GPIO):
-    mock_lcd.beep()
+@pytest.mark.asyncio
+async def test_beep_GPIOgoesOnAndThenOff(mock_lcd, mock_GPIO):
+    await mock_lcd.beep()
 
     calls = mock_GPIO.output.call_args_list
     # Starts with a 1, because the 0th call is the setup
@@ -52,7 +53,7 @@ async def test_displayLetter_space_waitsNormalTimeAndDoesntBeep(mock_lcd):
 
 @pytest.mark.asyncio
 async def test_displayLetter_letter_waitsNormalTimeAndBeeps(mock_lcd):
-    mock_lcd.beep = MagicMock()
+    mock_lcd.beep = AsyncMock()
     with patch("src.controllers.LCDAndBuzzerController.asyncio.sleep", new_callable=AsyncMock) as mockSleep:
         await mock_lcd.displayLetter("a")
     mockSleep.assert_awaited_once_with(mock_lcd.waitTime)
