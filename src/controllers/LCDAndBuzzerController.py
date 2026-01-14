@@ -20,9 +20,9 @@ class LCD:
         gpio.setup(self.buzzerPin, gpio.OUT)
         gpio.output(self.buzzerPin, gpio.HIGH) 
         
-    def beep(self):
+    async def beep(self):
         self.gpio.output(self.buzzerPin, self.gpio.LOW)  # Turn ON buzzer
-        time.sleep(0.01)  
+        await asyncio.sleep(0.01)  
         self.gpio.output(self.buzzerPin, self.gpio.HIGH)   # Turn OFF buzzer
         
         
@@ -33,7 +33,7 @@ class LCD:
         elif letter in self.longWaitList:
             await asyncio.sleep(self.longWaitTime)
         else:
-            self.beep()
+            await self.beep()
             await asyncio.sleep(self.waitTime)
         
     def turnOff(self):

@@ -19,9 +19,8 @@ class Matrix :
         self.matrixWidth = settings.matrix.columns
         self.flipEveryOtherRow = settings.matrix.flip_every_other_row
         self.spritesFolder = settings.matrix.sprites_folder
-        self.sprites = Sprites()
+        self.sprites = self.getSprites()
         self.randomIdleAnimationWeights = settings.matrix.random_sprites_weights
-        self.getSprites()
         
 
     

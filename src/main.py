@@ -1,9 +1,9 @@
 from pathlib import Path
 import uvicorn
 from src.app import app
-from scripts import configToObject
+from src.scripts import configToObject
 
-settings = configToObject.settings
+settings = configToObject.loadSettings("config.yaml")
 
 def main():
     socketPath: Path = Path("tmp/Moris/MALDC.sock")

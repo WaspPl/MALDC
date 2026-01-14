@@ -14,18 +14,18 @@ displayQueue: Queue = Queue()
 async def queueLifespan(app: FastAPI):
     import neopixel
     import board
-    import CharLCD
+    from RPLCD.i2c import CharLCD
     import RPi.GPIO as GPIO
     
-    settings = configToObject.settings
+    settings = configToObject.loadSettings("config.yaml")
     
     numberOfLEDs = settings.matrix.rows * settings.matrix.columns
     
     #set up the controllers
     matrixController = MatrixController.Matrix(neopixel.NeoPixel(pin=board.D18,n=numberOfLEDs, auto_write=False, pixel_order=neopixel.GRB, brightness=settings.matrix.brightness), "neutral", settings)
-    lCDAndBuzzerController = LCDAndBuzzerController.LCD(CharLCD(i2c_expander='PCF8574', address=0x27, port=1, cols=settings.lcd.columns, rows=settings.lcd.row, backlight_enabled=settings.backlight_enabled_by_default), GPIO, settings)
+    lCDAndBuzzerController = LCDAndBuzzerController.LCD(CharLCD(i2c_expander='PCF8574', address=0x27, port=1, cols=settings.lcd.line_length, rows=settings.lcd.line_count, backlight_enabled=settings.lcd.backlight_enabled_by_default), GPIO, settings)
     
-    task = create_task(queueManager(configToObject.settings, matrixController, lCDAndBuzzerController)) # As long as queueManager runs the API will be alive
+    task = create_task(queueManager(settings, matrixController, lCDAndBuzzerController, displayQueue)) # As long as queueManager runs the API will be alive
     yield
     task.cancel()
 
