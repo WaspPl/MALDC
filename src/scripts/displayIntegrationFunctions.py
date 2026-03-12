@@ -1,5 +1,5 @@
 from src.models.DisplayData import DisplayData
-from src.scripts.configToObject import Struct
+from src.scripts.settings import Struct
 from src.controllers import MatrixController, LCDAndBuzzerController
 from asyncio import Queue, wait_for
 from typing import List

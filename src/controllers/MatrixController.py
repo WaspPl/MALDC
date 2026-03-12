@@ -1,4 +1,4 @@
-from src.scripts.configToObject import Struct
+from src.scripts.settings import Struct
 import src.scripts.MatrixFunctions as mf
 from fastapi import HTTPException
 import asyncio

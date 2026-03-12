@@ -1,6 +1,6 @@
 import time
 import asyncio
-from src.scripts.configToObject import Struct
+from src.scripts.settings import Struct
 
 class LCD:
 
