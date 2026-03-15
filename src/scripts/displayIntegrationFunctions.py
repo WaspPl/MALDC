@@ -1,11 +1,10 @@
 from models.DisplayData import DisplayData
 from controllers import MatrixController, LCDAndBuzzerController
 from asyncio import Queue, wait_for
-from typing import List
 import asyncio
 import scripts.MatrixFunctions as mf
 import scripts.displayIntegrationFunctions as dif
-from src.scripts.settings import SettingsDep
+from scripts.settings import SettingsDep
 
 
 async def queueManager(settings: SettingsDep, matrix:MatrixController.Matrix, lcd: LCDAndBuzzerController, displayQueue: Queue):
