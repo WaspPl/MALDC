@@ -1,4 +1,4 @@
-from scripts.settings import Struct
+from scripts.settings import SettingsDep
 import scripts.MatrixFunctions as mf
 from fastapi import HTTPException
 import asyncio
@@ -10,7 +10,7 @@ import numpy as np
 import os
 
 class Matrix :
-    def __init__(self, neoPixel, emotion: str, settings: Struct):
+    def __init__(self, neoPixel, emotion: str, settings: SettingsDep):
         self.matrix = neoPixel
         self.emotion= emotion
         self.animationInProgress = False

@@ -1,14 +1,14 @@
 from models.DisplayData import DisplayData
-from scripts.settings import Struct
 from controllers import MatrixController, LCDAndBuzzerController
 from asyncio import Queue, wait_for
 from typing import List
 import asyncio
 import scripts.MatrixFunctions as mf
 import scripts.displayIntegrationFunctions as dif
+from src.scripts.settings import SettingsDep
 
 
-async def queueManager(settings: Struct, matrix:MatrixController.Matrix, lcd: LCDAndBuzzerController, displayQueue: Queue):
+async def queueManager(settings: SettingsDep, matrix:MatrixController.Matrix, lcd: LCDAndBuzzerController, displayQueue: Queue):
     firstItemInQueue: DisplayData = None
     while True:
         if firstItemInQueue == None: firstItemInQueue = await displayQueue.get() # This will wait for something to be added to the queue
