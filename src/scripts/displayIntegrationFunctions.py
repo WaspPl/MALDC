@@ -1,11 +1,11 @@
-from src.models.DisplayData import DisplayData
-from src.scripts.settings import Struct
-from src.controllers import MatrixController, LCDAndBuzzerController
+from models.DisplayData import DisplayData
+from scripts.settings import Struct
+from controllers import MatrixController, LCDAndBuzzerController
 from asyncio import Queue, wait_for
 from typing import List
 import asyncio
-import src.scripts.MatrixFunctions as mf
-import src.scripts.displayIntegrationFunctions as dif
+import scripts.MatrixFunctions as mf
+import scripts.displayIntegrationFunctions as dif
 
 
 async def queueManager(settings: Struct, matrix:MatrixController.Matrix, lcd: LCDAndBuzzerController, displayQueue: Queue):

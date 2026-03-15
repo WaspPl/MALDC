@@ -1,10 +1,10 @@
 from fastapi import FastAPI, Response, HTTPException
 from contextlib import asynccontextmanager
 from asyncio import create_task, Queue, wait_for, TimeoutError
-from src.models.DisplayData import DisplayData
-from src.scripts.settings import load_settings, SettingsDep
-from src.controllers import MatrixController, LCDAndBuzzerController
-from src.scripts.displayIntegrationFunctions import queueManager
+from models.DisplayData import DisplayData
+from scripts.settings import load_settings, SettingsDep
+from controllers import MatrixController, LCDAndBuzzerController
+from scripts.displayIntegrationFunctions import queueManager
 
 
 displayQueue: Queue = Queue()

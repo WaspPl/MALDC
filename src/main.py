@@ -1,7 +1,7 @@
 from pathlib import Path
 import uvicorn
-from src.app import app
-from src.scripts.settings import load_settings, SettingsDep
+from app import app
+from scripts.settings import load_settings, SettingsDep
 
 settings = load_settings()
 

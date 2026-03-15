@@ -1,9 +1,9 @@
-from src.scripts.settings import Struct
-import src.scripts.MatrixFunctions as mf
+from scripts.settings import Struct
+import scripts.MatrixFunctions as mf
 from fastapi import HTTPException
 import asyncio
 from typing import List
-from src.models.Sprites import Sprites
+from models.Sprites import Sprites
 from PIL import Image
 from pathlib import Path
 import numpy as np
