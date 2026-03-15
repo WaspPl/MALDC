@@ -10,7 +10,7 @@ def main():
     if settings.api.use_uds:
         socketPath: Path = Path(settings.api.linux.socket)
         socketPath.parent.mkdir(parents=True, exist_ok=True)
-        if socketPath.exists(): socketPath.rmdir() # We need a new socket
+        if socketPath.exists(): socketPath.unlink() # We need a new socket
         
         uvicorn.run("app:app", uds=settings.api.linux.socket)
     
