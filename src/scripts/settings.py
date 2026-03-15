@@ -5,7 +5,6 @@ import yaml
 from functools import lru_cache
 from typing import Annotated
 from fastapi import Depends
-from decimal import *
 
 class WindowsSettings(BaseModel):
     host: str = '127.0.0.1'
@@ -31,8 +30,8 @@ class MatrixSettings(BaseModel):
     random_sprite_interval_sec: int = 5
     random_sprites_weights: RandomSpritesWeightSettings = RandomSpritesWeightSettings()
     flip_every_other_row: bool = True
-    spritesheet_framerate: Decimal = 0.1
-    brightness: Decimal = 0.2
+    spritesheet_framerate: float = 0.1
+    brightness: float = 0.2
     sprites_folder: str = "storage/sprites"
     
 class BuzzerSettings(BaseModel):
@@ -43,9 +42,9 @@ class LCDSettings(BaseModel):
     line_length: int = 16
     backlight_enabled_by_default: bool = False
     long_wait_list: list[str] = [",", ".", "?", "!", ":", "\n"]
-    wait_time: Decimal = 0.05
-    long_wait_time: Decimal = 0.1
-    next_screen_wait_time: Decimal = 1
+    wait_time: float = 0.05
+    long_wait_time: float = 0.1
+    next_screen_wait_time: float = 1
 
 
 class Settings(BaseSettings):
