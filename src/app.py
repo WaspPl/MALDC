@@ -34,7 +34,7 @@ app: FastAPI = FastAPI(lifespan=queueLifespan)
 
 @app.post("/display", status_code=202)
 async def displayText(data: DisplayData):
-    print(f"Received display request: {data}")
+    print(f"Received display request: {data}", flush=True)
     if data.message is None and data.spriteBase64 is None:
         raise HTTPException(status_code=400, detail="At least one of those fields must me specified: message, spriteBase64")
     await displayQueue.put(data)
