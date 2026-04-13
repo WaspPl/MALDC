@@ -90,9 +90,9 @@ async def display( matrix: MatrixController.Matrix, lcd : LCDAndBuzzerController
     else:
         animation = asyncio.create_task(asyncio.sleep(0))
     
-    lcd.turnOn()
     
     if lines:
+        lcd.turnOn()
         for lineIndex, line in enumerate(lines):
             if animation.done(): await matrix.displayImage(matrix.sprites.rest[matrix.emotion]["eyes"], 0)
             
