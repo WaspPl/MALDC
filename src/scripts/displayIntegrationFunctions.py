@@ -81,7 +81,8 @@ def splitTextToLines(text: str, lineLength: int = 16):
     return finalArray 
 
 async def display( matrix: MatrixController.Matrix, lcd : LCDAndBuzzerController.LCD, message: str = "", spriteBase64: str = None, spriteReplayTimes: int = 1):
-    lines = dif.splitTextToLines(message, lcd.lineLength)
+    lines = dif.splitTextToLines(message, lcd.lineLength) if message else None
+    
     
     if spriteBase64:
         animationRGBArray = mf.base64ImageToRGBArray(spriteBase64)
@@ -91,26 +92,27 @@ async def display( matrix: MatrixController.Matrix, lcd : LCDAndBuzzerController
     
     lcd.turnOn()
     
-    for lineIndex, line in enumerate(lines):
-        if animation.done(): await matrix.displayImage(matrix.sprites.rest[matrix.emotion]["eyes"], 0)
-        
-        lcd.setLine((lineIndex) % 2)
-        
-        for letter in line:
-            await lcd.displayLetter(letter)
-            if animation.done():
-                mouth = matchMouthToLetter(letter)
-                if not mouth:
-                    await matrix.displayImage(matrix.sprites.rest[matrix.emotion]["mouth"], 4)
-                else:
-                    await matrix.displayImage(matrix.sprites.speech[mouth], 4)
-        
-        
-        if animation.done(): await matrix.displayImage(matrix.sprites.rest[matrix.emotion]["mouth"], 4)
-        
-        if lineIndex%2==1 and lineIndex!=len(lines)-1:
-            await asyncio.sleep(lcd.nextScreenWaitTime)
-            lcd.clear()
+    if lines:
+        for lineIndex, line in enumerate(lines):
+            if animation.done(): await matrix.displayImage(matrix.sprites.rest[matrix.emotion]["eyes"], 0)
+            
+            lcd.setLine((lineIndex) % 2)
+            
+            for letter in line:
+                await lcd.displayLetter(letter)
+                if animation.done():
+                    mouth = matchMouthToLetter(letter)
+                    if not mouth:
+                        await matrix.displayImage(matrix.sprites.rest[matrix.emotion]["mouth"], 4)
+                    else:
+                        await matrix.displayImage(matrix.sprites.speech[mouth], 4)
+            
+            
+            if animation.done(): await matrix.displayImage(matrix.sprites.rest[matrix.emotion]["mouth"], 4)
+            
+            if lineIndex%2==1 and lineIndex!=len(lines)-1:
+                await asyncio.sleep(lcd.nextScreenWaitTime)
+                lcd.clear()
         
     if animation and not animation.done(): await animation
     
