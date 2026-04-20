@@ -10,14 +10,14 @@ It's built to work on a Raspberry Pi with these connections in mind, but it can 
 
 <img src="https://github.com/WaspPl/MALDC/blob/main/readmeImages/circuit_image.png">
 
-## It's functions include:
- 1. API activation method
- 2. LED Matrix, LCD and Buzzer synchronization
- 3. Sleep states with message queueing
- 4. Custom idle animations support
- 5. Full customization through a .yaml config file
+# It's functions include:
+1. [API activation method](#api-activation-method)
+2. [LED Matrix, LCD and Buzzer synchronization](#led-matrix-lcd-and-buzzer-synchronization)
+3. [Sleep states with message queueing](#sleep-states-with-message-queueing)
+4. [Custom idle animations support](#custom-idle-animations-support)
+5. [Full customization through a .yaml config file](#full-customization-through-a-yaml-config-file)
 
-## API Activation Method
+# API Activation Method
 The system is controlled through API request. </br>
 The API itself is hosted using FastAPI and listens to one endpoint.
 | Method| URL |Description  |
@@ -37,7 +37,7 @@ The text sent is split into suitable chunks and displayed in screens one letter 
 
 While printing the characters the matrix either displays the provided sprite, or if one was not provided or has already ended tries to match it's mouth shape to the character displayed to mimic talking.
 
-##  Sleep states with message queueing
+# Sleep states with message queueing
 
 If the system receives multiple display requests in a quick succession it will queue them up in the order they were received. </br>
 After getting a message it will play a "Wake Up" animation turning on the matrix display, display the message and enter a "waiting" phase after which it'll play a "Sleep" animation and disappear. </br>
@@ -54,7 +54,7 @@ There are three rarities idle animations can be assigned to:
 Each rarity corresponds to a folder located at `/src/sprites/random/`  and can be assigned a weight that influences it's rarity. </br>
 When an animation is played a rarity is chosen first and then a random image from within it's folder gets displayed. This gives user the ability to add animations to the system without editing any code.
 
-## Full customization through a .yaml config file
+# Full customization through a .yaml config file
 This project features a cohesive config file allowing you to customize many features
 | Category | Config | Type | Default | Description |
 | :--- | :--- | :--- | :--- | :--- |
