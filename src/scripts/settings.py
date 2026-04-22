@@ -14,7 +14,7 @@ class LinuxSettings(BaseModel):
     socket:str = '/tmp/moris/maldc.sock'
 
 class ApiSettings(BaseModel):
-    use_uds: bool = False
+    use_uds: bool = True
     linux: LinuxSettings = LinuxSettings()
     windows: WindowsSettings = WindowsSettings()
 
